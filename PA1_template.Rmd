@@ -7,6 +7,7 @@ output:
 
 
 ## Loading and preprocessing the data
+```{r, echo=FALSE}
   #Set up enviroment for R scrip  
   # Packages for tidyverse 
     library("tidyverse")
@@ -33,17 +34,42 @@ output:
 
   # Set proper working Dir
     if (!getwd() == "C:/Users/paulr/Documents/R/Coursera_ReproducibleResearch/RepData_PeerAssessment1") {setwd("C:/Users/paulr/Documents/R/Coursera_ReproducibleResearch/RepData_PeerAssessment1")}
+```
 
+
+```{r}
   # Read data
     acticity <- read_csv("./data/activity.zip")
     tail(acticity)
     str(acticity)
     glimpse(acticity)
     summary(acticity)
+    head(acticity)
+    
+```
 
 ## What is mean total number of steps taken per day?
+I calcualte the total steaps taken each day.
+```{r}
+acticity %>% group_by(date) %>% summarise(TotalSteps = sum(steps), MeanSteps = mean(steps), MedianSteps = median(steps)) -> acticity1
+
+glimpse(acticity1)
+
+ggplot(acticity1, aes(TotalSteps)) +
+  geom_histogram()
+
+hist(TotalSteps, acticity1)
 
 
+
+ 
+
+
+
+
+
+
+```
 
 ## What is the average daily activity pattern?
 
