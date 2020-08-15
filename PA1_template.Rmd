@@ -7,7 +7,7 @@ output:
 
 
 ## Loading and preprocessing the data
-```{r, echo=FALSE}
+```{r, echo=FALSE, results=FALSE}
   #Set up enviroment for R scrip  
   # Packages for tidyverse 
     library("tidyverse")
@@ -15,6 +15,7 @@ output:
   # Package for building tables in markdown and notebook 
     library("knitr")
     library("kableExtra") 
+    library("xtable")
   # Package for forecasting
     library("fpp2")
   # Packages for reading excel and html files and XML
@@ -40,10 +41,11 @@ output:
 ```{r}
   # Read data
     acticity <- read_csv("./data/activity.zip")
-    tail(acticity)
+  
     str(acticity)
     glimpse(acticity)
     summary(acticity)
+    tail(acticity)
     head(acticity)
     
 ```
@@ -51,12 +53,13 @@ output:
 ## What is mean total number of steps taken per day?
 I calcualte the total steaps taken each day.
 ```{r}
-acticity %>% group_by(date) %>% summarise( TotalSteps = sum(steps), MeanSteps = mean(steps), MedianSteps = median(steps) ) -> acticity1
+acticity %>% group_by(date) %>% summarise( TotalSteps = sum(steps), MeanSteps = mean(steps)) -> acticity1 
+acticity1 %>% glimpse()
 
-glimpse(acticity1)
+acticity %>% na.omit() %>% summarise( TotalSteps = sum(steps), MeanSteps = mean(steps), MedianSteps = median(steps)) -> acticity2
+acticity2 %>% glimpse()
+
 view(acticity2)
-
-
 
 
 ggplot(acticity1, aes(x = date, y = TotalSteps)) +
@@ -66,7 +69,13 @@ acticity2 <- na.omit(acticity1)
 median(acticity1$TotalSteps)
 median(acticity2$TotalSteps)
 
-
+step_by_day <- aggregate(steps~date, data = acticity, median)
+          
+                         
+#                         subset, na.action = na.omit)
+step_by_day <- aggregate(steps~date, data= acticity, sum)
+knitr::kable(summary(step_by_day))
+head(step)
 ```
 
 ## What is the average daily activity pattern?
