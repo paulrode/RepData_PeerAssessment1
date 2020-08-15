@@ -54,7 +54,7 @@ I calcualte the total steaps taken each day.
 acticity %>% group_by(date) %>% summarise( TotalSteps = sum(steps), MeanSteps = mean(steps), MedianSteps = median(steps) ) -> acticity1
 
 glimpse(acticity1)
-view(acticity1)
+view(acticity2)
 
 
 
@@ -62,8 +62,9 @@ view(acticity1)
 ggplot(acticity1, aes(x = date, y = TotalSteps)) +
   geom_col()
 
-
-
+acticity2 <- na.omit(acticity1)
+median(acticity1$TotalSteps)
+median(acticity2$TotalSteps)
 
 
 ```
