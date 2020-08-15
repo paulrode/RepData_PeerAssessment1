@@ -51,19 +51,16 @@ output:
 ## What is mean total number of steps taken per day?
 I calcualte the total steaps taken each day.
 ```{r}
-acticity %>% group_by(date) %>% summarise(TotalSteps = sum(steps), MeanSteps = mean(steps), MedianSteps = median(steps)) -> acticity1
+acticity %>% group_by(date) %>% summarise( TotalSteps = sum(steps), MeanSteps = mean(steps), MedianSteps = median(steps) ) -> acticity1
 
 glimpse(acticity1)
-
-ggplot(acticity1, aes(TotalSteps)) +
-  geom_histogram()
-
-hist(TotalSteps, acticity1)
+view(acticity1)
 
 
 
- 
 
+ggplot(acticity1, aes(x = date, y = TotalSteps)) +
+  geom_col()
 
 
 
