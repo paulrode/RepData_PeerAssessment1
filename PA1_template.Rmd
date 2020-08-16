@@ -45,6 +45,7 @@ output:
     str(acticity)
     glimpse(acticity)
     summary(acticity)
+    str(acticity)
     tail(acticity)
     head(acticity)
     
@@ -54,12 +55,8 @@ output:
 I calcualte the total steaps taken each day.
 ```{r}
 acticity %>% group_by(date) %>% summarise( TotalSteps = sum(steps), MeanSteps = mean(steps)) -> acticity1 
-acticity1 %>% glimpse()
+acticity1 %>% summary()
 
-acticity %>% na.omit() %>% summarise( TotalSteps = sum(steps), MeanSteps = mean(steps), MedianSteps = median(steps)) -> acticity2
-acticity2 %>% glimpse()
-
-view(acticity2)
 
 
 ggplot(acticity1, aes(x = date, y = TotalSteps)) +
@@ -69,13 +66,18 @@ acticity2 <- na.omit(acticity1)
 median(acticity1$TotalSteps)
 median(acticity2$TotalSteps)
 
-step_by_day <- aggregate(steps~date, data = acticity, median)
-          
-                         
-#                         subset, na.action = na.omit)
+step_by_day <- aggregate(steps~date, data = acticity, sum,  na.action = na.omit)
+
 step_by_day <- aggregate(steps~date, data= acticity, sum)
 knitr::kable(summary(step_by_day))
 head(step)
+
+
+totalDailySteps <- with(acticity, tapply(steps,date, sum))
+steps.mean <- mean(totalDailySteps)
+steps.median <- median(totalDailySteps)
+view(totalDailySteps)
+
 ```
 
 ## What is the average daily activity pattern?
