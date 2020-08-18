@@ -5,7 +5,7 @@ output:
     keep_md: true
 --- 
 
-
+#Enviroment 
 ## Loading and preprocessing the data
 ```{r, echo=FALSE, results=FALSE}
   #Set up enviroment for R scrip  
@@ -36,47 +36,21 @@ output:
   # Set proper working Dir
     if (!getwd() == "C:/Users/paulr/Documents/R/Coursera_ReproducibleResearch/RepData_PeerAssessment1") {setwd("C:/Users/paulr/Documents/R/Coursera_ReproducibleResearch/RepData_PeerAssessment1")}
 ```
+Read data in from: https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip
 
 
-```{r}
-  # Read data
-    acticity <- read_csv("./data/activity.zip")
-  
-    str(acticity)
-    glimpse(acticity)
-    summary(acticity)
-    str(acticity)
-    tail(acticity)
-    head(acticity)
+```{r, echo=FALSE, results=FALSE}
+    activity <- read_csv("./data/activity.zip")
     
 ```
 
 ## What is mean total number of steps taken per day?
 I calcualte the total steaps taken each day.
 ```{r}
-acticity %>% group_by(date) %>% summarise( TotalSteps = sum(steps), MeanSteps = mean(steps)) -> acticity1 
-acticity1 %>% summary()
+with(activity, tapply(steps,date, sum)) -> TotalSteps
+view(TotalSteps)
 
 
-
-ggplot(acticity1, aes(x = date, y = TotalSteps)) +
-  geom_col()
-
-acticity2 <- na.omit(acticity1)
-median(acticity1$TotalSteps)
-median(acticity2$TotalSteps)
-
-step_by_day <- aggregate(steps~date, data = acticity, sum,  na.action = na.omit)
-
-step_by_day <- aggregate(steps~date, data= acticity, sum)
-knitr::kable(summary(step_by_day))
-head(step)
-
-
-totalDailySteps <- with(acticity, tapply(steps,date, sum))
-steps.mean <- mean(totalDailySteps)
-steps.median <- median(totalDailySteps)
-view(totalDailySteps)
 
 ```
 
