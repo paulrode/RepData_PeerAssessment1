@@ -40,22 +40,35 @@ Read data in from: https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivi
 
 
 ```{r, echo=FALSE, results=FALSE}
-    activity <- read_csv("./data/activity.zip")
+    activity <- read_csv("./data/activity.zip", col_names = TRUE, col_types = "nDn")
     
 ```
 
 ## What is mean total number of steps taken per day?
 I calcualte the total steaps taken each day.
 ```{r}
-with(activity, tapply(steps,date, sum)) -> TotalSteps
-view(TotalSteps)
 
+activity %>% group_by(date) %>% summarise(SPD = sum(steps)) -> result1
 
+result1 %>% kable()
+
+hist(result1$SPD, main = "Histogram of Total Steps per Day", xlab = "Total Steps/Day", border = "blue", col = "brown", breaks = 7)
+
+kable(summary(result1), format = "html", align = "l") %>% kable_styling(bootstrap_options = "striped")
 
 ```
 
 ## What is the average daily activity pattern?
+Make a time series plot (type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
+Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+```{r, echo=FLASE}
+activity %>% na.omit() %>% group_by(interval) %>% summarise(SPI = sum(steps)) -> result3
+with(activity, tapply(steps, interval, sum))
+
+
+
+```
 
 
 ## Imputing missing values
