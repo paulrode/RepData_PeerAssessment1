@@ -52,9 +52,9 @@ activity %>% group_by(date) %>% summarise(SPD = sum(steps)) -> result1
 
 result1 %>% kable()
 
-hist(result1$SPD, main = "Histogram of Total Steps per Day", xlab = "Total Steps/Day", border = "blue", col = "brown", breaks = 7)
+hist(result1$SPD, main = "Histogram of Total Steps per Day", xlab = "Total Steps/Day", border = "blue", col = "brown", breaks = 20)
 
-kable(summary(result1), format = "html", align = "l") %>% kable_styling(bootstrap_options = "striped")
+kable(summary(result1), format = "html", align = "l") %>% kable_styling(c(bootstrap_options = "striped", "bordered"))
 
 ```
 
@@ -63,8 +63,23 @@ Make a time series plot (type = "l") of the 5-minute interval (x-axis) and the a
 
 Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 ```{r, echo=FLASE}
-activity %>% na.omit() %>% group_by(interval) %>% summarise(SPI = sum(steps)) -> result3
-with(activity, tapply(steps, interval, sum))
+steps_na <- is.na(acticity$steps)
+
+
+data_full <- data
+nas <- is.na(data_full$steps)
+avg_interval <- tapply(data_full$steps, data_full$interval, mean, na.rm=TRUE, simplify=TRUE)
+data_full$steps[nas] <- avg_interval[as.character(data_full$interval[nas])]
+
+
+
+activity$steps[steps_na] -> result1
+
+activity %>% na.omit() %>% group_by(interval) %>% summarise(Mean_S = mean(steps)) -> steps_i
+
+activity[steps_na,]
+
+view(steps_i)
 
 
 
@@ -73,6 +88,21 @@ with(activity, tapply(steps, interval, sum))
 
 ## Imputing missing values
 
+```{r, echo=FLASE}
 
+steps_na <- is.na(acticity$steps)
+
+activity %>% na.omit() %>% group_by(interval) %>% summarise(Mean_S = mean(steps)) -> mean_spi
+
+?match
+
+data_full <- data
+nas <- is.na(data_full$steps)
+avg_interval <- tapply(data_full$steps, data_full$interval, mean, na.rm=TRUE, simplify=TRUE)
+data_full$steps[nas] <- avg_interval[as.character(data_full$interval[nas])]
+
+
+
+```
 
 ## Are there differences in activity patterns between weekdays and weekends?
