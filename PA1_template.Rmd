@@ -63,46 +63,53 @@ Make a time series plot (type = "l") of the 5-minute interval (x-axis) and the a
 
 Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 ```{r, echo=FLASE}
-steps_na <- is.na(acticity$steps)
-
-
-data_full <- data
-nas <- is.na(data_full$steps)
-avg_interval <- tapply(data_full$steps, data_full$interval, mean, na.rm=TRUE, simplify=TRUE)
-data_full$steps[nas] <- avg_interval[as.character(data_full$interval[nas])]
-
-
-
-activity$steps[steps_na] -> result1
 
 activity %>% na.omit() %>% group_by(interval) %>% summarise(Mean_S = mean(steps)) -> steps_i
+head(steps_i)
 
-activity[steps_na,]
-
-view(steps_i)
-
-
+ggplot(steps_i, aes(x = interval, y = Mean_S)) +
+  geom_line()
 
 ```
+
 
 
 ## Imputing missing values
 
 ```{r, echo=FLASE}
 
-steps_na <- is.na(acticity$steps)
+steps_na <- is.na(activity$steps)
+sum(steps_na) 
+sum(!steps_na)
+length(activity$steps[steps_na])
 
-activity %>% na.omit() %>% group_by(interval) %>% summarise(Mean_S = mean(steps)) -> mean_spi
+activity_na <- activity[steps_na,]
+interval_mean <- match(activity_na$interval, steps_i$interval)
 
-?match
+activity_na$steps <- steps_i$Mean_S[interval_mean]
 
-data_full <- data
-nas <- is.na(data_full$steps)
-avg_interval <- tapply(data_full$steps, data_full$interval, mean, na.rm=TRUE, simplify=TRUE)
-data_full$steps[nas] <- avg_interval[as.character(data_full$interval[nas])]
+activity %>% na.omit() %>% rbind(activity_na) -> activity_final
+
+summary(activity_final)
+
+```
+
+## Are there differences in activity patterns between weekdays and weekends?
+
+```{r, echo=FALSE }
+summary(activity)
+summary(activity_final)
+
+activity_final %>% group_by(date) %>% summarise(SPD = sum(steps)) -> result2
+
+result2 %>% kable()
+
+hist(result2$SPD, main = "Histogram of Total Steps per Day", xlab = "Total Steps/Day", border = "blue", col = "brown", breaks = 20)
+
+kable(summary(result2), format = "html", align = "l") %>% kable_styling(c(bootstrap_options = "striped", "bordered"))
+
 
 
 
 ```
 
-## Are there differences in activity patterns between weekdays and weekends?
