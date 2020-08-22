@@ -40,7 +40,7 @@ Read data in from: https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivi
 
 
 ```{r, echo=FALSE, results=FALSE}
-    activity <- read_csv("./data/activity.zip", col_names = TRUE, col_types = "nDn")
+activity <- read_csv("./data/activity.zip", col_names = TRUE, col_types = "nDn")
     
 ```
 
@@ -50,9 +50,13 @@ I calcualte the total steaps taken each day.
 
 activity %>% group_by(date) %>% summarise(SPD = sum(steps)) -> result1
 
-result1 %>% kable()
+hist(result1$SPD, main = "Total Steps per Day (no NA)", xlab = "Total Steps/Day", border = "blue", col = "brown", breaks = 20)
+```
 
-hist(result1$SPD, main = "Histogram of Total Steps per Day", xlab = "Total Steps/Day", border = "blue", col = "brown", breaks = 20)
+
+
+
+```{r, echo=FALSE}
 
 kable(summary(result1), format = "html", align = "l") %>% kable_styling(c(bootstrap_options = "striped", "bordered"))
 
@@ -65,7 +69,6 @@ Which 5-minute interval, on average across all the days in the dataset, contains
 ```{r, echo=FLASE}
 
 activity %>% na.omit() %>% group_by(interval) %>% summarise(Mean_S = mean(steps)) -> steps_i
-head(steps_i)
 
 ggplot(steps_i, aes(x = interval, y = Mean_S)) +
   geom_line()
@@ -79,15 +82,13 @@ ggplot(steps_i, aes(x = interval, y = Mean_S)) +
 ```{r, echo=FLASE}
 
 steps_na <- is.na(activity$steps)
-sum(steps_na) 
-sum(!steps_na)
-length(activity$steps[steps_na])
+# sum(steps_na) 
+# sum(!steps_na)
+# length(activity$steps[steps_na])
 
 activity_na <- activity[steps_na,]
 interval_mean <- match(activity_na$interval, steps_i$interval)
-
 activity_na$steps <- steps_i$Mean_S[interval_mean]
-
 activity %>% na.omit() %>% rbind(activity_na) -> activity_final
 
 summary(activity_final)
@@ -104,7 +105,11 @@ activity_final %>% group_by(date) %>% summarise(SPD = sum(steps)) -> result2
 
 result2 %>% kable()
 
-hist(result2$SPD, main = "Histogram of Total Steps per Day", xlab = "Total Steps/Day", border = "blue", col = "brown", breaks = 20)
+par(mfcol=(c(1,2)))
+
+hist(result2$SPD, main = "Total Steps per Day (Imputed NA)", xlab = "Total Steps/Day", border = "blue", col = "brown", breaks = 20)
+
+hist(result1$SPD, main = "Total Steps per Day (Omit NA)", xlab = "Total Steps/Day", border = "blue", col = "brown", breaks = 20)
 
 kable(summary(result2), format = "html", align = "l") %>% kable_styling(c(bootstrap_options = "striped", "bordered"))
 
