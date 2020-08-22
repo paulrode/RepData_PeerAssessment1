@@ -96,7 +96,7 @@ interval_mean <-match(activity_na$interval, steps_i$interval)
 activity_na$steps <- steps_i$Mean_S[interval_mean]
 activity %>% na.omit() %>% rbind(activity_na) -> activity_final
 
-summary(activity_final)
+summary(activity_final) 
 
 
 ```
