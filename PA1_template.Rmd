@@ -55,7 +55,6 @@ hist(result1$SPD, main = "Total Steps per Day (no NA)", xlab = "Total Steps/Day"
 
 
 
-
 ```{r, echo=FALSE}
 
 kable(summary(result1), format = "html", align = "l") %>% kable_styling(c(bootstrap_options = "striped", "bordered"))
@@ -66,7 +65,7 @@ kable(summary(result1), format = "html", align = "l") %>% kable_styling(c(bootst
 Make a time series plot (type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
 Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
-```{r, echo=FLASE}
+```{r}
 
 activity %>% na.omit() %>% group_by(interval) %>% summarise(Mean_S = mean(steps)) -> steps_i
 
@@ -79,7 +78,7 @@ ggplot(steps_i, aes(x = interval, y = Mean_S)) +
 
 ## Imputing missing values
 
-```{r, echo=FLASE}
+```{r}
 
 steps_na <- is.na(activity$steps)
 # sum(steps_na) 
