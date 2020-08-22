@@ -7,7 +7,7 @@ output:
 
 #Enviroment 
 ## Loading and preprocessing the data
-```{r, echo=FALSE, results=FALSE}
+```{r, echo=FALSE, results="hide", include=FALSE}
   #Set up enviroment for R scrip  
   # Packages for tidyverse 
     library("tidyverse")
@@ -101,8 +101,6 @@ summary(activity)
 summary(activity_final)
 
 activity_final %>% group_by(date) %>% summarise(SPD = sum(steps)) -> result2
-
-result2 %>% kable()
 
 par(mfcol=(c(1,2)))
 
