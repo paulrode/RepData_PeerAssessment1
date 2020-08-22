@@ -5,9 +5,9 @@ output:
     keep_md: true
 --- 
 
-#Enviroment 
-## Loading and preprocessing the data
 ```{r, echo=FALSE, results="hide", include=FALSE}
+  # Enviroment 
+  # Loading and preprocessing the data
   #Set up enviroment for R scrip  
   # Packages for tidyverse 
     library("tidyverse")
@@ -36,35 +36,41 @@ output:
   # Set proper working Dir
     if (!getwd() == "C:/Users/paulr/Documents/R/Coursera_ReproducibleResearch/RepData_PeerAssessment1") {setwd("C:/Users/paulr/Documents/R/Coursera_ReproducibleResearch/RepData_PeerAssessment1")}
 ```
-Read data in from: https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip
 
 
-```{r, echo=FALSE, results=FALSE}
+## What is mean total number of steps taken per day?
+
+I calcualted the total steaps taken each day by groupping and summerising the data. 
+Read data in from: https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip using read_csv. Most of my code uses the tityverse conventions and libraries. 
+
+Data put into dataframe/tibble here:
+```{r, echo=TRUE, results=FALSE}
 activity <- read_csv("./data/activity.zip", col_names = TRUE, col_types = "nDn")
     
 ```
 
-## What is mean total number of steps taken per day?
-I calcualte the total steaps taken each day.
+Groupped and summerised here: 
 ```{r}
 
 activity %>% group_by(date) %>% summarise(SPD = sum(steps)) -> result1
+```
+
+Histogram of steps taked per day
+```{r, echo=FALSE}
 
 hist(result1$SPD, main = "Total Steps per Day (no NA)", xlab = "Total Steps/Day", border = "blue", col = "brown", breaks = 20)
 ```
 
 
-
+This table shows a summery of Steps per day (SPD) recorded per day:
 ```{r, echo=FALSE}
-
-kable(summary(result1), format = "html", align = "l") %>% kable_styling(c(bootstrap_options = "striped", "bordered"))
-
+summary(result1$SPD)
 ```
 
 ## What is the average daily activity pattern?
 Make a time series plot (type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
-Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+
 ```{r}
 
 activity %>% na.omit() %>% group_by(interval) %>% summarise(Mean_S = mean(steps)) -> steps_i
@@ -74,23 +80,24 @@ ggplot(steps_i, aes(x = interval, y = Mean_S)) +
 
 ```
 
-
+Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+```{r}
+steps_i %>% filter(Mean_S == max(steps_i$Mean_S)) -> max_i
+```
+The inerval with the average number of steps accross all days is: `r<max_i>`.
 
 ## Imputing missing values
 
 ```{r}
 
 steps_na <- is.na(activity$steps)
-# sum(steps_na) 
-# sum(!steps_na)
-# length(activity$steps[steps_na])
-
 activity_na <- activity[steps_na,]
-interval_mean <- match(activity_na$interval, steps_i$interval)
+interval_mean <-match(activity_na$interval, steps_i$interval)
 activity_na$steps <- steps_i$Mean_S[interval_mean]
 activity %>% na.omit() %>% rbind(activity_na) -> activity_final
 
 summary(activity_final)
+
 
 ```
 
