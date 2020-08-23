@@ -103,25 +103,26 @@ activity %>% na.omit() %>% rbind(activity_na) -> activity_final
 ## Are there differences in activity patterns between weekdays and weekends?
 
 7. Histogram of the total number of steps taken each day after missing values are imputed is shown here:
-```{r, echo=TURE} }
-summary(activity)
-summary(activity_final)
+```{r} 
 
 activity_final %>% group_by(date) %>% summarise(SPD = sum(steps)) -> result2
-
-
 
 hist(result2$SPD, main = "Total Steps per Day (Imputed NA)", xlab = "Total Steps/Day", border = "blue", col = "brown", breaks = 20)
 ```
 
-```{r, echo=TURE} }
+
+8. Panel plot comparing the average number of steps taken per 5-minute interval across weekdays and weekends with imputed values.
+```{r}
+
+activity_final %>% filter(wday(date) == c(1,7)) %>% group_by(date) %>% summarise(SPD = sum(steps)) -> result3
+
+activity_final %>% filter(wday(date) == c(2,3,4,5,6))   %>% group_by(date) %>% summarise(SPD = sum(steps)) -> result4
 
 par(mfcol=(c(1,2)))
 
-hist(result2$SPD, main = "Total Steps per Day (Imputed NA)", xlab = "Total Steps/Day", border = "blue", col = "brown", breaks = 20)
+hist(result3$SPD, main = "Total Steps per Weenend Day", xlab = "Total Steps/Day", border = "blue", col = "brown", breaks = 20)
 
-hist(result1$SPD, main = "Total Steps per Day (Omit NA)", xlab = "Total Steps/Day", border = "blue", col = "brown", breaks = 20)
-
+hist(result4$SPD, main = "Total Steps per Weekday", xlab = "Total Steps/Day", border = "blue", col = "brown", breaks = 20)
 
 
 ```
