@@ -43,34 +43,34 @@ output:
 I calcualted the total steaps taken each day by groupping and summerising the data. 
 Read data in from: https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip using read_csv. Most of my code uses the tityverse conventions and libraries. 
 
-Data put into dataframe/tibble here:
+1. Code for reading in data to a dataframe/tibble here:
 ```{r, echo=TRUE, results=FALSE}
 activity <- read_csv("./data/activity.zip", col_names = TRUE, col_types = "nDn")
     
 ```
 
-Groupped and summerised here: 
+2. Histogram of the total number of steps taked per day
 ```{r}
-
 activity %>% group_by(date) %>% summarise(SPD = sum(steps)) -> result1
-```
-
-Histogram of steps taked per day
-```{r, echo=FALSE}
 
 hist(result1$SPD, main = "Total Steps per Day (no NA)", xlab = "Total Steps/Day", border = "blue", col = "brown", breaks = 20)
 ```
 
 
-This table shows a summery of Steps per day (SPD) recorded per day:
-```{r, echo=FALSE}
-summary(result1$SPD)
+3. This table shows a summery of Steps per day (SPD) recorded per day:
+```{r, echo=TRUE, fig.align='right'}
+as.numeric(sub('.*:', '', summary(result1)[3,2])) -> spd_median
+as.numeric(sub('.*:', '', summary(result1)[4,2])) -> spd_mean
+tibble(Result = c("Median", "Mean"), Value = c(spd_median, spd_mean)) -> spd_median_mean
+spd_median_mean %>% kable(format = "html", table.attr = "style='width:30%;'") %>% 
+  kableExtra::kable_styling()
+
 ```
 
 ## What is the average daily activity pattern?
 Make a time series plot (type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
-
+4. This code developes the dataframe used for the timeseries plot, which is done in ggplot2 as a the line plot below
 ```{r}
 
 activity %>% na.omit() %>% group_by(interval) %>% summarise(Mean_S = mean(steps)) -> steps_i
@@ -80,14 +80,16 @@ ggplot(steps_i, aes(x = interval, y = Mean_S)) +
 
 ```
 
-Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+5. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 ```{r}
 steps_i %>% filter(Mean_S == max(steps_i$Mean_S)) -> max_i
+
 ```
-The inerval with the average number of steps accross all days is: `r<max_i>`.
+Answer: the inerval with the average number of steps accross all days is: `r max_i[1,1] `, and the maximun number of steps is: `r max_i[1,2]`.
 
 ## Imputing missing values
 
+6. The strategy for imputing vales was to first make a datafrom of average steps per interval. Pull out the missing step data and associated interval and then using match () fill in the missing data with average stes per all days for that interval. The activity_final contains the imuted and actual data combination. 
 ```{r}
 
 steps_na <- is.na(activity$steps)
@@ -96,27 +98,29 @@ interval_mean <-match(activity_na$interval, steps_i$interval)
 activity_na$steps <- steps_i$Mean_S[interval_mean]
 activity %>% na.omit() %>% rbind(activity_na) -> activity_final
 
-summary(activity_final) 
-
-
 ```
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-```{r, echo=FALSE }
+7. Histogram of the total number of steps taken each day after missing values are imputed is shown here:
+```{r, echo=TURE} }
 summary(activity)
 summary(activity_final)
 
 activity_final %>% group_by(date) %>% summarise(SPD = sum(steps)) -> result2
+
+
+
+hist(result2$SPD, main = "Total Steps per Day (Imputed NA)", xlab = "Total Steps/Day", border = "blue", col = "brown", breaks = 20)
+```
+
+```{r, echo=TURE} }
 
 par(mfcol=(c(1,2)))
 
 hist(result2$SPD, main = "Total Steps per Day (Imputed NA)", xlab = "Total Steps/Day", border = "blue", col = "brown", breaks = 20)
 
 hist(result1$SPD, main = "Total Steps per Day (Omit NA)", xlab = "Total Steps/Day", border = "blue", col = "brown", breaks = 20)
-
-kable(summary(result2), format = "html", align = "l") %>% kable_styling(c(bootstrap_options = "striped", "bordered"))
-
 
 
 
